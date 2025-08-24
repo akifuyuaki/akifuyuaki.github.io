@@ -35,11 +35,7 @@ header{
     width: 100%;
 }
 
-<<<<<<< HEAD
 main.home-main{
-=======
-main{
->>>>>>> 6a70e585d15a4e10f0e3dcf2e114708e47657465
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -164,15 +160,7 @@ p{
         grid-template-columns: 1fr;
     }
 
-<<<<<<< HEAD
-
     .site-title{
         width: 100%;
     }    
 }
-=======
-    .site-title{
-        width: 100%;
-    }    
-}
->>>>>>> 6a70e585d15a4e10f0e3dcf2e114708e47657465
