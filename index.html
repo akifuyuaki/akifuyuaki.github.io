@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho&text=秋冬秋の記憶域&display=swap" rel="stylesheet">
+        <title>秋冬秋の記憶域</title>
+        <style>
+            *{
+                box-sizing: border-box;
+            }
+
+            body{
+                background-color: #f5f5f5;
+                color: #3f3f3f;
+                display: flex;
+                flex-direction: column;
+                font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", Meiryo, sans-serif;
+                margin: 0;
+                min-height: 100vh;
+                padding: 0;
+            }
+
+            footer{
+                background-color: #fff;
+                width: 100%;
+            }
+
+            footer p{
+                font-size: 0.85rem;
+                margin: 0 auto;
+                padding: 0.25rem 0;
+                text-align: center;
+                width: 70vw;
+            }
+
+            header{
+                background-color: #fff;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+                padding: 1.25rem 0;
+                position: sticky;
+                top: 0;
+                width: 100%;
+            }
+
+            main{
+                display: flex;
+                flex: 1;
+                flex-direction: column;
+                margin: 0 auto;
+                width: 70vw;
+            }
+
+            p{
+                line-height: 2.25;
+            }
+
+            .about{
+                background-color: #fff;
+                border-radius: 12px;
+                margin-bottom: 2rem;
+                padding: 1.5rem;
+            }
+
+            .about h2{
+                margin: 0;
+            }
+
+            .home-links{
+                display: grid;
+                column-gap: 1rem;
+                grid-auto-rows: min-content;
+                grid-template-columns: 1fr 1fr 1fr;
+                margin: 2rem auto;
+                row-gap: 1rem;
+                width: 100%;
+            }
+
+            .home-links .category{
+                background-color: #fff;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                padding: 1.5rem;
+            }
+
+            .home-links .category h2{
+                border-bottom: 2px solid #a3c4f3;
+                font-size: 1.25rem;
+                margin: 0;
+                padding-bottom: 0.25rem;
+            }
+
+            .home-links .category h2 a{
+                color: #3f3f3f;
+                text-decoration: none;
+                transition: color 0.2s;
+            }
+
+            .home-links .category h2 a:hover{
+                color: #3a8ee6;
+            }
+
+            .home-links .category h2 a:active{
+                color: #2a6fb0;
+            }
+
+            .home-links .category ul{
+                list-style-type: none;
+                margin-bottom: 0;
+                padding: 0;
+            }
+
+            .home-links .category ul li{
+                margin: 0.5rem 0;
+            }
+
+            .home-links .category ul li.extra{
+                display: none;
+            }
+
+            .home-links .category ul li.moreLinks{
+                font-weight: bold;
+            }
+
+            .home-links .category ul li a{
+                color: #3f3f3f;
+                text-decoration: none;
+                transition: color 0.2s;
+            }
+
+            .home-links .category ul li a:hover{
+                color: #3a8ee6;
+            }
+
+            .home-links .category ul li a:active{
+                color: #2a6fb0;
+            }
+
+            .site-title{
+                font-family: 'Zen Old Mincho', serif;
+                font-size: 1.5rem;
+                line-height: normal;
+                margin: 0 auto;
+                width: 70vw;
+            }
+
+            .site-title a{
+                color: #3f3f3f;
+                text-decoration: none;
+            }
+
+            @media (max-width: 768px) {
+                header{
+                    padding: 17.5px 20px;
+                }
+
+                main{
+                    padding: 8px;
+                    width: 100%;
+                }
+
+                footer p{
+                    padding: 8px;
+                    width: 100%;
+                }
+
+                .home-links{
+                    grid-template-columns: 1fr;
+                }
+
+                .site-title{
+                    width: 100%;
+                }    
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <p class="site-title"><a href="https://akifuyuaki.github.io/">秋冬秋の記憶域</a></p>
+        </header>
+        <main class="home-main">
+            <div class="home-links">
+                <div class="category">
+                    <h2><a href="#">語学</a></h2>
+                    <ul>
+                        <li><a href="#">古典ギリシャ語</a></li>
+                        <li><a href="#">サンスクリット語</a></li>
+                        <li class="extra"><a href="#">ラテン語</a></li>
+                        <li class="extra"><a href="#">フィンランド語</a></li>
+                        <li class="extra"><a href="#">ヘブライ語</a></li>
+                        <li class="moreLinks"><a href="#">もっと見る</a></li>
+                    </ul>
+                </div>
+                <div class="category">
+                    <h2><a href="#">ツール集</a></h2>
+                    <ul>
+                        <li><a href="#">悉曇文字入力ツール</a></li>
+                        <li><a href="#"></a></li>
+                        <li><a href="#"></a></li>
+                    </ul>
+                </div>
+                <div class="category">
+                    <h2><a href="#">プログラミング</a></h2>
+                    <ul>
+                        <li><a href="#">Python</a></li>
+                        <li><a href="#">C++</a></li>
+                        <li><a href="#"></a></li>
+                    </ul>
+                </div>
+                <div class="category">
+                    <h2><a href="#">数学</a></h2>
+                    <ul>
+                        <li><a href="#">中学数学</a></li>
+                        <li><a href="#">高校数学</a></li>
+                        <li><a href="#">大学数学</a></li>
+                    </ul>
+                </div>
+                <div class="category">
+                    <h2><a href="#">ゲーム攻略記</a></h2>
+                    <ul>
+                        <li><a href="#">崩壊：スターレイル</a></li>
+                        <li><a href="#">広告で見る謎のスマホゲーム</a></li>
+                    </ul>
+                </div>
+                <div class="category">
+                    <h2><a href="#">夢日記</a></h2>
+                    <ul>
+                        <li><a href="#">夢日記って何？危ない？</a></li>
+                        <li><a href="#">私の夢日記</a></li>
+                    </ul>
+                </div>
+                <div class="category">
+                    <h2><a href="#">3DCG</a></h2>
+                    <ul>
+                        <li><a href="#">【Blender】Blender をはじめてみよう</a></li>
+                        <li><a href="#">3DCG の学習法</a></li>
+                        <li><a href="#">3DCG とは？</a></li>
+                    </ul>
+                </div>
+                <div class="category">
+                    <h2><a href="#">フォント</a></h2>
+                    <ul>
+                        <li><a href="#">Inkscape & FontForge でフォント作成</a></li>
+                    </ul>
+                </div>
+                <div class="category">
+                    <h2><a href="#">雑記</a></h2>
+                </div>
+            </div>
+            <div class="about">
+                <h2>このサイトについて</h2>
+                <p>
+                    超多趣味人間であるこの私、秋冬秋の学んできたことややったことの記録を残す場所です。
+                    もし私が死んでも、この広いインターネットに私が存在した記録を残したいなと思いまして。
+                    ほら、「人間忘れ去られたときが本当の死」って言うじゃない。
+                    だから更新できなくなっても残り続ける GitHub Pages にしたわけ。GitHub よ永遠なれ。
+                </p>
+                <h2>私について</h2>
+                <p>
+                    書くほどのこともないけど一応。人間です。
+                </p>
+            </div>
+        </main>
+        <footer>
+            <p>&copy; 秋冬秋. 著作権は放棄するけど画像とか文章とか引用した部分はもちろん他に権利者がいるから気を付けてね</p>
+        </footer>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+            const moreLinks = document.querySelectorAll(".moreLinks");
+
+            moreLinks.forEach(more => {
+                more.addEventListener("click", function(e) {
+                e.preventDefault();
+                const ul = more.closest("ul");
+                const extras = ul.querySelectorAll(".extra");
+
+                // 現在の表示状態を取得
+                const isHidden = window.getComputedStyle(extras[0]).display === "none";
+
+                // トグル
+                extras.forEach(li => li.style.display = isHidden ? "list-item" : "none");
+
+                // リンクテキスト切り替え
+                more.querySelector("a").textContent = isHidden ? "閉じる" : "もっと見る";
+                });
+            });
+            });
+        </script>
+    </body>
+</html>
