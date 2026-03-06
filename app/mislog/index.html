@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f0f13">
+<title>ミスノート</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0f0f13; color: #e8e8f0; font-family: 'DM Sans', 'Hiragino Sans', 'Yu Gothic', sans-serif; }
+  textarea, input { font-family: inherit; }
+  ::-webkit-scrollbar { width: 6px; } 
+  ::-webkit-scrollbar-track { background: #0f0f13; }
+  ::-webkit-scrollbar-thumb { background: #2a2a38; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const DEFAULT_TAGS = ["問題文読み間違え", "計算ミス", "漢字ミス", "シンプル知識不足"];
+const TAG_COLORS = ["#7c6af7","#06b6d4","#f59e0b","#ec4899","#10b981","#f97316"];
+const C = {
+  bg:"#0f0f13", surface:"#17171f", border:"#2a2a38",
+  accent:"#7c6af7", accentSoft:"#7c6af720", text:"#e8e8f0",
+  muted:"#6b6b80", dim:"#9999aa", success:"#4ade80",
+  warn:"#facc15", danger:"#f87171",
+};
+
+const DAY = 86400000;
+const now = () => Date.now();
+const SRS_INTERVALS = [1,3,7,14,30,60,120];
+
+function nextInterval(level) { return SRS_INTERVALS[Math.min(level, SRS_INTERVALS.length-1)]; }
+function isDue(card) { return !card.nextReview || card.nextReview <= now(); }
+
+function load(key, fallback) {
+  try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
+}
+
+function tagColor(tag, allTags) {
+  const i = allTags.indexOf(tag) % TAG_COLORS.length;
+  return TAG_COLORS[i < 0 ? 0 : i];
+}
+
+// ── Styles ──
+const s = {
+  app: { minHeight:"100vh", background:C.bg, color:C.text, maxWidth:680, margin:"0 auto", padding:"0 16px 80px" },
+  header: { padding:"28px 0 20px", borderBottom:`1px solid ${C.border}`, marginBottom:24 },
+  logo: { fontSize:22, fontWeight:700, letterSpacing:"-0.5px", display:"flex", alignItems:"center" },
+  nav: { display:"flex", gap:4, marginTop:14, flexWrap:"wrap" },
+  card: { background:C.surface, border:`1px solid ${C.border}`, borderRadius:16, padding:20, marginBottom:14 },
+  input: { width:"100%", background:C.surface, border:`1px solid ${C.border}`, borderRadius:10, padding:"11px 14px", color:C.text, fontSize:15, outline:"none", resize:"vertical" },
+  fieldLabel: { fontSize:13, color:C.dim, marginBottom:6, fontWeight:500 },
+};
+
+function NavBtn({ label, active, onClick }) {
+  return <button onClick={onClick} style={{ padding:"6px 14px", borderRadius:8, border:"none", background:active?C.accentSoft:"transparent", color:active?C.accent:C.muted, fontWeight:active?600:400, fontSize:14, cursor:"pointer" }}>{label}</button>;
+}
+
+function Btn({ children, onClick, variant="primary", style={} }) {
+  const base = { padding:"12px 22px", borderRadius:10, border:"none", fontWeight:600, fontSize:15, cursor:"pointer", letterSpacing:"-0.2px", ...style };
+  const variants = {
+    primary: { background:C.accent, color:"#fff" },
+    ghost: { background:"transparent", border:`1px solid ${C.border}`, color:C.muted },
+    sm: { background:C.accent, color:"#fff", padding:"8px 16px", fontSize:13 },
+  };
+  return <button onClick={onClick} style={{ ...base, ...variants[variant] }}>{children}</button>;
+}
+
+function Tag({ label, active, color, onClick }) {
+  return <span onClick={onClick} style={{ padding:"5px 12px", borderRadius:20, fontSize:12, fontWeight:600, cursor:onClick?"pointer":"default", background:active?color+"30":C.surface, color:active?color:C.muted, border:`1px solid ${active?color+"60":C.border}`, whiteSpace:"nowrap", transition:"all 0.15s" }}>{label}</span>;
+}
+
+// ── Screens ──
+
+function HomeScreen({ cards, setScreen }) {
+  const due = cards.filter(isDue);
+  const mastered = cards.filter(c => (c.level||0) >= 3);
+  return (
+    <div>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:12, marginBottom:24 }}>
+        {[{n:due.length,l:"今日の復習"},{n:cards.length,l:"総ミス数"},{n:mastered.length,l:"習得済み"}].map(({n,l})=>(
+          <div key={l} style={{ ...s.card, padding:16, textAlign:"center" }}>
+            <div style={{ fontSize:48, fontWeight:800, color:C.accent, lineHeight:1, letterSpacing:"-2px" }}>{n}</div>
+            <div style={{ fontSize:12, color:C.muted, marginTop:4, fontWeight:500 }}>{l}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ display:"flex", gap:12, marginBottom:28 }}>
+        <Btn onClick={() => due.length > 0 && setScreen("review")} style={{ flex:1, padding:16, fontSize:16, opacity:due.length===0?0.4:1 }}>
+          {due.length > 0 ? `復習開始 (${due.length}件)` : "今日の復習は完了 🎉"}
+        </Btn>
+        <Btn variant="ghost" onClick={() => setScreen("add")} style={{ padding:"16px 20px" }}>＋追加</Btn>
+      </div>
+
+      {cards.length === 0 ? (
+        <div style={{ textAlign:"center", paddingTop:48, color:C.muted }}>
+          <div style={{ fontSize:40, marginBottom:12 }}>📝</div>
+          <div style={{ fontSize:16, fontWeight:600 }}>ミスを記録しよう</div>
+          <div style={{ fontSize:13, marginTop:8 }}>「＋追加」からミスを入力してね</div>
+        </div>
+      ) : (
+        <>
+          <div style={{ fontSize:13, fontWeight:600, color:C.muted, marginBottom:12 }}>最近追加</div>
+          {cards.slice(0,3).map(card => (
+            <div key={card.id} style={{ ...s.card, padding:"14px 18px" }}>
+              <div style={{ fontSize:14, fontWeight:600 }}>{card.question.slice(0,60)}{card.question.length>60&&"…"}</div>
+            </div>
+          ))}
+        </>
+      )}
+    </div>
+  );
+}
+
+function AddScreen({ cards, setCards, customTags, setCustomTags, setScreen }) {
+  const allTags = [...DEFAULT_TAGS, ...customTags];
+  const [form, setForm] = useState({ question:"", answer:"", myAnswer:"", note:"", tags:[] });
+  const [newTag, setNewTag] = useState("");
+
+  function toggleTag(tag) {
+    setForm(f => ({ ...f, tags: f.tags.includes(tag) ? f.tags.filter(t=>t!==tag) : [...f.tags, tag] }));
+  }
+  function addCustomTag() {
+    const t = newTag.trim();
+    if (t && !allTags.includes(t)) setCustomTags(p => [...p, t]);
+    setNewTag("");
+  }
+  function save() {
+    if (!form.question.trim() || !form.answer.trim()) return;
+    setCards(p => [{ id:now(), ...form, level:0, nextReview:null, reviewCount:0, createdAt:now() }, ...p]);
+    setScreen("home");
+  }
+
+  return (
+    <div>
+      <div style={{ fontSize:18, fontWeight:700, marginBottom:20 }}>ミスを追加</div>
+      {[
+        { key:"question", label:"問題文 *", ph:"どんな問題？", rows:3 },
+        { key:"answer",   label:"正答 *",   ph:"正しい答えは？", rows:2 },
+        { key:"myAnswer", label:"自分の回答（任意）", ph:"何と答えた？", rows:2 },
+        { key:"note",     label:"解説メモ（任意）", ph:"なぜ間違えた？ポイントは？", rows:3 },
+      ].map(({ key, label, ph, rows }) => (
+        <div key={key} style={{ marginBottom:14 }}>
+          <div style={s.fieldLabel}>{label}</div>
+          <textarea rows={rows} placeholder={ph} value={form[key]} onChange={e=>setForm(f=>({...f,[key]:e.target.value}))} style={s.input} />
+        </div>
+      ))}
+
+      <div style={{ marginBottom:20 }}>
+        <div style={s.fieldLabel}>ミスタイプ（複数選択可）</div>
+        <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
+          {allTags.map(tag => <Tag key={tag} label={tag} active={form.tags.includes(tag)} color={tagColor(tag,allTags)} onClick={()=>toggleTag(tag)} />)}
+        </div>
+        <div style={{ display:"flex", gap:8, marginTop:10 }}>
+          <input placeholder="タグを追加..." value={newTag} onChange={e=>setNewTag(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addCustomTag()} style={{ ...s.input, flex:1, padding:"8px 12px", fontSize:13 }} />
+          <Btn variant="ghost" onClick={addCustomTag} style={{ padding:"8px 16px", fontSize:13 }}>追加</Btn>
+        </div>
+      </div>
+
+      <div style={{ display:"flex", gap:12 }}>
+        <Btn onClick={save} style={{ flex:1 }}>保存</Btn>
+        <Btn variant="ghost" onClick={() => setScreen("home")}>キャンセル</Btn>
+      </div>
+    </div>
+  );
+}
+
+function ReviewScreen({ cards, setCards, setScreen }) {
+  const allTags = [...DEFAULT_TAGS];
+  const due = cards.filter(isDue);
+  const [queue] = useState(() => [...due].sort(()=>Math.random()-0.5));
+  const [idx, setIdx] = useState(0);
+  const [shown, setShown] = useState(false);
+
+  if (queue.length === 0) {
+    return <div style={{ textAlign:"center", paddingTop:80 }}>
+      <div style={{ fontSize:48 }}>🎉</div>
+      <div style={{ fontSize:22, fontWeight:700, marginTop:16 }}>今日の復習完了！</div>
+      <Btn onClick={()=>setScreen("home")} style={{ marginTop:24 }}>ホームへ</Btn>
+    </div>;
+  }
+
+  if (idx >= queue.length) {
+    return <div style={{ textAlign:"center", paddingTop:80 }}>
+      <div style={{ fontSize:48 }}>🎉</div>
+      <div style={{ fontSize:22, fontWeight:700, marginTop:16 }}>今日の復習完了！</div>
+      <Btn onClick={()=>setScreen("home")} style={{ marginTop:24 }}>ホームへ</Btn>
+    </div>;
+  }
+
+  const card = queue[idx];
+  const allTagsArr = [...DEFAULT_TAGS];
+
+  function grade(g) {
+    const newLevel = g <= 1 ? Math.max(0,(card.level||0)-1) : (card.level||0)+1;
+    setCards(p => p.map(c => c.id===card.id ? { ...c, level:newLevel, nextReview:now()+nextInterval(newLevel)*DAY, reviewCount:(c.reviewCount||0)+1 } : c));
+    setIdx(i => i+1);
+    setShown(false);
+  }
+
+  return (
+    <div>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+        <span style={{ fontSize:13, color:C.muted }}>{idx+1} / {queue.length}</span>
+        <button onClick={()=>setScreen("home")} style={{ background:"none", border:"none", color:C.muted, cursor:"pointer", fontSize:13 }}>終了</button>
+      </div>
+      <div style={{ height:4, background:C.border, borderRadius:2, marginBottom:24 }}>
+        <div style={{ height:"100%", width:`${(idx/queue.length)*100}%`, background:C.accent, borderRadius:2, transition:"width 0.3s" }} />
+      </div>
+
+      <div style={s.card}>
+        {card.tags?.length > 0 && (
+          <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:12 }}>
+            {card.tags.map(t => <Tag key={t} label={t} active color={tagColor(t,[...DEFAULT_TAGS])} />)}
+          </div>
+        )}
+        <div style={{ fontSize:13, color:C.muted, marginBottom:8 }}>問題</div>
+        <div style={{ fontSize:18, fontWeight:600, lineHeight:1.6, whiteSpace:"pre-wrap" }}>{card.question}</div>
+        {card.myAnswer && (
+          <div style={{ marginTop:14, padding:"11px 14px", background:C.danger+"15", borderRadius:10, borderLeft:`3px solid ${C.danger}` }}>
+            <div style={{ fontSize:12, color:C.danger, marginBottom:4, fontWeight:600 }}>自分の回答（ミス）</div>
+            <div style={{ fontSize:14 }}>{card.myAnswer}</div>
+          </div>
+        )}
+      </div>
+
+      {!shown ? (
+        <Btn onClick={()=>setShown(true)} style={{ width:"100%" }}>答えを見る</Btn>
+      ) : (
+        <>
+          <div style={s.card}>
+            <div style={{ fontSize:13, color:C.success, marginBottom:8, fontWeight:600 }}>正答</div>
+            <div style={{ fontSize:18, fontWeight:600, lineHeight:1.6, whiteSpace:"pre-wrap" }}>{card.answer}</div>
+            {card.note && (
+              <div style={{ marginTop:14, padding:"11px 14px", background:C.accentSoft, borderRadius:10 }}>
+                <div style={{ fontSize:12, color:C.accent, marginBottom:4, fontWeight:600 }}>解説メモ</div>
+                <div style={{ fontSize:14, color:C.dim, lineHeight:1.6, whiteSpace:"pre-wrap" }}>{card.note}</div>
+              </div>
+            )}
+          </div>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr 1fr", gap:8 }}>
+            {[{l:"もう一度",c:C.danger,g:0},{l:"難しい",c:C.warn,g:1},{l:"OK",c:C.success,g:2},{l:"簡単",c:C.accent,g:3}].map(({l,c,g})=>(
+              <button key={g} onClick={()=>grade(g)} style={{ padding:"14px 8px", borderRadius:10, border:`1px solid ${c}40`, background:c+"20", color:c, fontWeight:700, fontSize:13, cursor:"pointer" }}>{l}</button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function StatsScreen({ cards, customTags }) {
+  const allTags = [...DEFAULT_TAGS, ...customTags];
+  const stats = allTags.map(tag => ({ tag, count: cards.filter(c=>c.tags?.includes(tag)).length }))
+    .filter(s=>s.count>0).sort((a,b)=>b.count-a.count);
+  return (
+    <div>
+      <div style={{ fontSize:18, fontWeight:700, marginBottom:20 }}>ミスタイプ統計</div>
+      {stats.length === 0 ? (
+        <div style={{ color:C.muted, textAlign:"center", paddingTop:48 }}>まだデータがありません</div>
+      ) : (
+        <>
+          {stats.map(({tag,count})=>(
+            <div key={tag} style={{ marginBottom:14 }}>
+              <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
+                <span style={{ fontSize:14, fontWeight:600 }}>{tag}</span>
+                <span style={{ fontSize:14, color:C.muted }}>{count}件</span>
+              </div>
+              <div style={{ height:8, background:C.border, borderRadius:4 }}>
+                <div style={{ height:"100%", width:`${(count/stats[0].count)*100}%`, background:tagColor(tag,allTags), borderRadius:4 }} />
+              </div>
+            </div>
+          ))}
+          <div style={{ ...s.card, marginTop:20 }}>
+            <div style={{ fontSize:13, color:C.muted }}>最多ミスタイプ</div>
+            <div style={{ fontSize:20, fontWeight:700, marginTop:4 }}>{stats[0].tag}</div>
+            <div style={{ fontSize:13, color:C.muted, marginTop:4 }}>{stats[0].count}件のミス</div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+function CollectionScreen({ cards, setCards, customTags }) {
+  const allTags = [...DEFAULT_TAGS, ...customTags];
+  const [filter, setFilter] = useState(null);
+  const filtered = filter ? cards.filter(c=>c.tags?.includes(filter)) : cards;
+  return (
+    <div>
+      <div style={{ fontSize:18, fontWeight:700, marginBottom:14 }}>ミス図鑑</div>
+      <div style={{ display:"flex", gap:8, flexWrap:"wrap", marginBottom:18 }}>
+        <Tag label="すべて" active={!filter} color={C.accent} onClick={()=>setFilter(null)} />
+        {allTags.filter(t=>cards.some(c=>c.tags?.includes(t))).map(tag=>(
+          <Tag key={tag} label={tag} active={filter===tag} color={tagColor(tag,allTags)} onClick={()=>setFilter(tag)} />
+        ))}
+      </div>
+      {filtered.length === 0 ? (
+        <div style={{ color:C.muted, textAlign:"center", paddingTop:48 }}>ミスがありません</div>
+      ) : filtered.map(card=>(
+        <div key={card.id} style={s.card}>
+          {card.tags?.length>0 && (
+            <div style={{ display:"flex", gap:6, flexWrap:"wrap", marginBottom:10 }}>
+              {card.tags.map(t=><Tag key={t} label={t} active color={tagColor(t,allTags)} />)}
+            </div>
+          )}
+          <div style={{ fontSize:15, fontWeight:600, marginBottom:8, lineHeight:1.5 }}>{card.question}</div>
+          <div style={{ fontSize:13, color:C.success }}>✓ {card.answer}</div>
+          {card.myAnswer && <div style={{ fontSize:13, color:C.danger, marginTop:3 }}>✗ {card.myAnswer}</div>}
+          {card.note && <div style={{ fontSize:12, color:C.muted, marginTop:8, lineHeight:1.5 }}>{card.note}</div>}
+          <div style={{ display:"flex", justifyContent:"space-between", marginTop:10, alignItems:"center" }}>
+            <span style={{ fontSize:11, color:C.muted }}>復習 {card.reviewCount||0}回 · Lv.{card.level||0}</span>
+            <button onClick={()=>setCards(p=>p.filter(c=>c.id!==card.id))} style={{ background:"none", border:"none", color:C.muted, cursor:"pointer", fontSize:13 }}>削除</button>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── App ──
+function App() {
+  const [screen, setScreen] = useState("home");
+  const [cards, setCards] = useState(() => load("mistakeCards", []));
+  const [customTags, setCustomTags] = useState(() => load("customTags", []));
+
+  useEffect(() => { localStorage.setItem("mistakeCards", JSON.stringify(cards)); }, [cards]);
+  useEffect(() => { localStorage.setItem("customTags", JSON.stringify(customTags)); }, [customTags]);
+
+  const navItems = [
+    { key:"home", label:"ホーム" },
+    { key:"stats", label:"統計" },
+    { key:"collection", label:"ミス図鑑" },
+  ];
+
+  return (
+    <div style={s.app}>
+      <div style={s.header}>
+        <div style={s.logo}>
+          <span style={{ color:C.accent }}>ミス</span>ノート
+        </div>
+        {screen !== "review" && (
+          <div style={s.nav}>
+            {navItems.map(({key,label}) => <NavBtn key={key} label={label} active={screen===key} onClick={()=>setScreen(key)} />)}
+          </div>
+        )}
+      </div>
+
+      {screen === "home"       && <HomeScreen cards={cards} setScreen={setScreen} />}
+      {screen === "add"        && <AddScreen cards={cards} setCards={setCards} customTags={customTags} setCustomTags={setCustomTags} setScreen={setScreen} />}
+      {screen === "review"     && <ReviewScreen cards={cards} setCards={setCards} setScreen={setScreen} />}
+      {screen === "stats"      && <StatsScreen cards={cards} customTags={customTags} />}
+      {screen === "collection" && <CollectionScreen cards={cards} setCards={setCards} customTags={customTags} />}
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+</script>
+</body>
+</html>
