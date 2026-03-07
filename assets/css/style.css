@@ -1,3 +1,7 @@
+:root {
+    --color-bg-surface: #fff;
+}
+
 *{
     box-sizing: border-box;
 }
@@ -40,6 +44,13 @@ main.home-main{
     flex: 1;
     flex-direction: column;
     margin: 0 auto;
+    width: 70vw;
+}
+
+main.page {
+    background-color: var(--color-bg-surface);
+    border-radius: 1rem;
+    margin: 1.5rem auto;
     width: 70vw;
 }
 
