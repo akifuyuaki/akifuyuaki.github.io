@@ -8,13 +8,15 @@
     --glass-border: rgba(255, 255, 255, 0.3) 1px solid;
 
     --shadow-md: 0 6px 32px rgba(0, 0, 0, 0.08);
+
+    --heading-line: linear-gradient(to right, var(--color-accent), transparent);
 }
 
 *{
     box-sizing: border-box;
 }
 
-body{
+body {
     background: var(--color-bg-base);
     color: #3f3f3f;
     display: flex;
@@ -65,6 +67,7 @@ main.page {
     background-color: var(--color-bg-surface);
     border-radius: 1rem;
     box-shadow: var(--shadow-md);
+    flex: 1;
     margin: 1.5rem auto;
     padding: 1.5rem;
     width: 70vw;
@@ -78,22 +81,36 @@ p{
     line-height: 2.25;
 }
 
-.about{
+.about {
     background-color: #fff;
     border-radius: 12px;
     box-shadow: var(--shadow-md);
     margin-bottom: 2rem;
-    padding: 2rem;
+    padding: 1.5rem;
 }
 
-.about h2{
+.about h2 {
     margin: 0;
     margin-top: 0.25rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0.75rem;
+    position: relative;
+}
+
+.about h2::after {
+    content: "";
+    background: var(--heading-line);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 100%;
 }
 
 .about p {
-    margin-top: 0.75rem;
-    margin-bottom: 2rem;
+    margin-top: 1rem;
+    margin-bottom: 3rem;
+    padding-inline: 0.75rem;
 }
 
 .home-links{
@@ -124,7 +141,7 @@ p{
 
 .home-links .category h2::after{
     content: "";
-    background: linear-gradient(to right, var(--color-accent), rgba(255, 255, 255, 0));
+    background: linear-gradient(to right, var(--color-accent), transparent);
     bottom: 0;
     left: 0;
     height: 2px;
