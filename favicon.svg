@@ -2,13 +2,16 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="512"
-   height="512"
-   viewBox="0 0 512 512"
+   width="16"
+   height="16"
+   viewBox="0 0 16 16"
    version="1.1"
    id="svg1"
+   sodipodi:docname="favicon-2.svg"
+   inkscape:export-filename="favicon-2.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
-   sodipodi:docname="favicon2.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -22,44 +25,67 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:document-units="px"
-     inkscape:zoom="1.5097656"
-     inkscape:cx="255.66882"
-     inkscape:cy="256"
+     showgrid="true"
+     inkscape:zoom="24.15625"
+     inkscape:cx="9.0866753"
+     inkscape:cy="9.2936611"
      inkscape:window-width="1920"
      inkscape:window-height="991"
      inkscape:window-x="-9"
      inkscape:window-y="-9"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1" />
+     inkscape:current-layer="svg1">
+    <inkscape:grid
+       id="grid1"
+       units="px"
+       originx="0"
+       originy="0"
+       spacingx="1"
+       spacingy="1"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       enabled="true"
+       visible="true" />
+  </sodipodi:namedview>
   <defs
      id="defs1" />
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     style="fill:#1a1a1a">
     <rect
-       style="fill:#1a1a1a"
+       style="fill:#f5f0e8;fill-opacity:1"
        id="rect1"
-       width="512"
-       height="512"
+       width="16"
+       height="16"
        x="0"
-       y="0" />
-  </g>
-  <g
-     inkscape:groupmode="layer"
-     id="layer2"
-     inkscape:label="Layer 2">
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:447.742px;font-family:'BIZ UDPGothic';-inkscape-font-specification:'BIZ UDPGothic, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#ffffff;stroke-width:5.33025"
-       x="85.164406"
-       y="423.45947"
-       id="text1"><tspan
-         sodipodi:role="line"
-         id="tspan1"
-         x="85.164406"
-         y="423.45947"
-         style="stroke-width:5.33025">A</tspan></text>
+       y="0"
+       ry="4" />
+    <rect
+       style="fill:#2c2c2a;fill-opacity:1;stroke-width:0.957427"
+       id="rect2"
+       width="11"
+       height="2"
+       x="2.5"
+       y="2.9999998"
+       ry="1" />
+    <rect
+       style="fill:#88878a;fill-opacity:1;stroke-width:0.861479"
+       id="rect3"
+       width="11.05"
+       height="1.9994496"
+       x="2.5"
+       y="7"
+       ry="0.99972481" />
+    <rect
+       style="fill:#d3d1c7;fill-opacity:1;stroke-width:0.685759"
+       id="rect3-8"
+       width="7.0000005"
+       height="2"
+       x="2.5"
+       y="11"
+       ry="1" />
   </g>
 </svg>
