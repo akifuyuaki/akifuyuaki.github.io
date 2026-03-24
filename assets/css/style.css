@@ -114,6 +114,12 @@ p{
     padding-inline: 0.75rem;
 }
 
+.about a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
 .home-links{
     display: grid;
     column-gap: 1rem;
